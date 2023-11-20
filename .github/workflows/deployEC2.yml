@@ -32,7 +32,7 @@ jobs:
         HOST: ${{ secrets.EC2_HOST }}
         USER: deployer
       run: |
-        echo "$PRIVATE_KEY" > deploy_key.pem
-        chmod 600 deploy_key.pem
-        rsync -avz -e "ssh -o StrictHostKeyChecking=no -i deploy_key.pem" ./461Phase2/dist/ $USER@$HOST:/usr/share/nginx/html/
-        rm -f deploy_key.pem
+        echo "$PRIVATE_KEY" > nov20_kp.pem
+        chmod 600 nov20_kp.pem
+        rsync -avz -e "ssh -o StrictHostKeyChecking=no -i nov20_kp.pem" ./461Phase2/dist/ $USER@$HOST:/usr/share/nginx/html/
+        rm -f nov20_kp.pem
