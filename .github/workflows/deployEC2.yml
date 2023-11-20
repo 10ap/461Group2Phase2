@@ -30,7 +30,7 @@ jobs:
       env:
         PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
         HOST: ${{ secrets.EC2_HOST }}
-        USER: deployer
+        USER: ec2-user
       run: |
         echo "$PRIVATE_KEY" > nov20_kp.pem
         chmod 600 nov20_kp.pem
