@@ -52,7 +52,7 @@ AWS.config.update({
 });
 // Create an S3 instance
 var s3 = new AWS.S3();
-var BUCKET_NAME = "461s3bucket";
+var BUCKET_NAME = "461s3bucketv2";
 function upload_package(package_id, file) {
     return __awaiter(this, void 0, void 0, function () {
         var file_content, unique_filename, params, file_url, error_1;

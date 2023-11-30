@@ -18,7 +18,7 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue')
     },
     {
-      path: '/install/:packageName',
+      path: '/install/:packageName/:packageId',
       name: 'install',
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route

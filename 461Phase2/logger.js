@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logger = exports.getLogger = void 0;
+exports.time = exports.logger = exports.getLogger = void 0;
 var winston = require('winston'); //Logging library
 var dotenv = require("dotenv");
 dotenv.config();
@@ -9,11 +9,7 @@ var logLevels = {
     1: 'info',
     2: 'debug',
 };
-var logLevels_ = {
-    silent: 0,
-    info: 1,
-    debug: 2,
-};
+var timezone = 'America/New_York';
 function getLogLevel() {
     var logLevel = Number(process.env.LOG_LEVEL);
     if (!logLevel) {
@@ -44,7 +40,10 @@ function getLogger() {
     var logPath = getLogPath();
     var logger = winston.createLogger({
         level: logLevel,
-        format: winston.format.simple(),
+        format: winston.format.printf(function (_a) {
+            var level = _a.level, message = _a.message;
+            return "[".concat(level, "]: ").concat(message);
+        }),
         transports: [
             new winston.transports.File({ filename: logPath, level: logLevel }), // Actual log file
         ],
@@ -52,4 +51,20 @@ function getLogger() {
     return logger;
 }
 exports.getLogger = getLogger;
+function getTimestampLogger() {
+    var logPath = getLogPath();
+    var logLevel = getLogLevel();
+    var time_logger = winston.createLogger({
+        level: logLevel,
+        format: winston.format.combine(winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss', tz: timezone }), winston.format.printf(function (_a) {
+            var message = _a.message, timestamp = _a.timestamp;
+            return "[time]: ".concat(timestamp, " -- ").concat(message);
+        })),
+        transports: [
+            new winston.transports.File({ filename: logPath, level: logLevel }), // Actual log file
+        ],
+    });
+    return time_logger;
+}
 exports.logger = getLogger();
+exports.time = getTimestampLogger();

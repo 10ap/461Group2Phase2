@@ -25,6 +25,14 @@ jobs:
       run: npm run build
       working-directory: 461Phase2
 
+    - name: Build backend
+      run: sudo npx tsc *.ts
+      working-directory: 461Phase2
+
+    - name: Run backend
+      run: pm2 restart app
+      working-directory: 461Phase2
+
     # Assuming that the output directory after building is '461Phase2/dist'
     - name: Deploy to EC2
       env:

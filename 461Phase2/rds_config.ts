@@ -2,7 +2,7 @@
 // TO RUN THESE FUNCTIONS, RUN app.mjs
 import { Client } from 'pg';
 import * as dotenv from 'dotenv';
-import { logger } from './logger';
+import { logger, time } from './logger';
 
 dotenv.config();
 

@@ -5,25 +5,31 @@
         <div class="packageTitle">
           {{packageContent.packageName}}
         </div>
-        <router-link :to="{ name: 'install', params: { packageName: packageContent.packageName } }">Go to install page</router-link>
+        <router-link :to="{ name: 'install', params: { packageName: packageContent.packageName, packageId: packageContent.packageId} }">Go to install page</router-link>
         <div class="metricScores">
           <div class="metricScore">
-            Metric 1: {{ packageContent.metric1 }}
+            Bus factor: {{ packageContent.busFactor }}
           </div>
           <div class="metricScore">
-            Metric 2: {{ packageContent.metric2 }}
+            Ramp up: {{ packageContent.rampup }}
           </div>
           <div class="metricScore">
-            Metric 3: {{ packageContent.metric3 }}
+            License: {{ packageContent.license }}
           </div>
           <div class="metricScore">
-            Metric 4: {{ packageContent.metric4 }}
+            Correctness: {{ packageContent.correctness }}
           </div>
           <div class="metricScore">
-            Metric 5: {{ packageContent.metric5 }}
+            Maintainer: {{ packageContent.maintainer }}
           </div>
           <div class="metricScore">
-            Total Score: {{ packageContent.totalMetric }}
+            Pull Request: {{ packageContent.pullRequest }}
+          </div>
+          <div class="metricScore">
+            Pinning: {{ packageContent.pinning }}
+          </div>
+          <div class="metricScore">
+            Total Score: {{ packageContent.score }}
           </div>
         </div>
     </div>

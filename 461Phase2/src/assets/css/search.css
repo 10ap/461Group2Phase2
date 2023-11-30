@@ -1,12 +1,16 @@
 #searchBtn {
+    position: relative;
     font-size: 1.75em;
     display: flex;
+    top: -5vw;
 }
 
 #searchBar {
+    position: relative;
     width:44%;
     font-size: 1.75em;
     display: flex;
+    top: -5vw;
 }
 
 #topNav {
@@ -31,6 +35,8 @@
     color: black;
     font-family: Arial;
     font-size: 1.4em;
+    margin-bottom: 1em;
+    cursor: pointer;
 }
 
 .title {
@@ -41,5 +47,5 @@
     margin-left:auto;
     margin-right:auto;
     position: relative;
-    top: -5vw;
+    top: -8vw;
 }

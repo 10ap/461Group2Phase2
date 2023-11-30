@@ -9,11 +9,7 @@ const logLevels: { [key: number]: string }= {
     2: 'debug',
 }
 
-const logLevels_ = {
-    silent: 0,
-    info: 1,
-    debug: 2,
-}
+const timezone = 'America/New_York'
 
 function getLogLevel() {
     const logLevel = Number(process.env.LOG_LEVEL);
@@ -50,7 +46,9 @@ export function getLogger() {
     
     const logger = winston.createLogger({
         level: logLevel,
-        format: winston.format.simple(),
+        format: winston.format.printf(({ level, message }: { level: string; message: string }) => {
+            return `[${level}]: ${message}`;
+        }),
         transports: [
           new winston.transports.File({ filename: logPath, level: logLevel }),   // Actual log file
         ],
@@ -59,4 +57,26 @@ export function getLogger() {
     return logger;
 }
 
+function getTimestampLogger() {
+    const logPath = getLogPath();
+    const logLevel = getLogLevel();
+
+    const time_logger = winston.createLogger({
+        level: logLevel,
+        format: winston.format.combine(
+            winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss', tz: timezone }),
+            winston.format.printf(({ message, timestamp }: { message: string; timestamp: string }) => {
+                return `[time]: ${timestamp} -- ${message}`;
+            }),
+        ),
+        transports: [
+            new winston.transports.File({ filename: logPath, level: logLevel }),   // Actual log file
+          ],
+    });
+
+    return time_logger
+}
+
 export const logger = getLogger();
+export const time = getTimestampLogger();
+

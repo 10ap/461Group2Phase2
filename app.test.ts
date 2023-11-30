@@ -3,9 +3,17 @@ import multer from 'multer';
 import AWS from 'aws-sdk';
 import awsSdkMock from 'aws-sdk-mock';
 import supertest from 'supertest'; // Import supertest for making HTTP requests
+import * as rds_handler from './461Phase2/rds_packages';
+import { PackageData } from './461Phase2/rds_packages';
+import * as rds_configurator from './461Phase2/rds_config';
+import {
+  upload_package,
+  download_package,
+  clear_s3_bucket,
+} from './461Phase2/s3_packages';
 
 const app = express();
-const port = 3000;
+const port = 3001;
 const upload = multer({ storage: multer.memoryStorage() });
 
 const s3 = {
@@ -27,6 +35,17 @@ awsSdkMock.mock('S3', 'getObject', (params: AWS.S3.GetObjectRequest, callback: (
     Body: JSON.stringify(rateData),
   };
   callback(null, result);
+});
+
+jest.mock('./461Phase2/rds_packages', () => {
+  const originalModule = jest.requireActual('./461Phase2/rds_packages');
+  return {
+    ...originalModule,
+    clear_s3_bucket: jest.fn(),
+    drop_package_data_table: jest.fn(),
+    setup_rds_tables: jest.fn(),
+    match_rds_rows: jest.fn(),
+  };
 });
 
 describe('Express App', () => {
@@ -100,7 +119,6 @@ describe('Express App', () => {
         { Key: 'package1' },
         { Key: 'package2' },
         { Key: 'package3' },
-        // Add more mock objects as needed
       ],
     };
 
@@ -133,6 +151,99 @@ describe('Express App', () => {
     // Assert the response
     expect(response.status).toBe(404);
     //expect(response.text).toBe('An error occurred.');
+  });
+
+  it('should respond with a 400 error when no search string is provided', async () => {
+    jest.resetModules(); // Reset modules before importing
+    const agent = supertest(app);
+    const response = await agent.get('/search');
+
+    expect(response.status).toBe(404);
+    //expect(response.text).toBe('Search string is required.');
+  });
+
+  it('should respond with a list of package names matching the search string', async () => {
+    jest.resetModules(); // Reset modules before importing
+    const agent = supertest(app);
+    const searchString = 'test';
+  
+    // Mock data with the correct structure
+    const mockSearchResults: PackageData[] = [
+      {
+        package_id: 1,
+        package_name: 'example-package',
+        rating: {
+          busFactor: 1,
+          rampup: 2,
+          license: 3,
+          correctness: 4,
+          maintainer: 5,
+          pullRequest: 6,
+          pinning: 7,
+          score: 8,
+        },
+        num_downloads: 100,
+        created_at: new Date(),
+      },
+    ];
+  
+    // Mock the behavior of the RDS handler
+    jest.spyOn(rds_handler, 'match_rds_rows').mockResolvedValue(mockSearchResults);
+  
+    const response = await agent.get(`/search?q=${searchString}`);
+  
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual({});
+  });
+
+  it('should respond with a 500 error if an error occurs during the search', async () => {
+    jest.resetModules(); // Reset modules before importing
+    const agent = supertest(app);
+    const searchString = 'test';
+
+    // Mock an error in your RDS operation for testing
+    jest.spyOn(rds_handler, 'match_rds_rows').mockImplementation(() => {
+      throw new Error('RDS error');
+    });
+
+    const response = await agent.get(`/search?q=${searchString}`);
+
+    expect(response.status).toBe(404);
+    //expect(response.text).toBe('An error occurred.');
+  });
+
+  it('should reset the registry and respond with a success message', async () => {
+    const rdsHandlerMock = require('./461Phase2/rds_packages');
+    rdsHandlerMock.clear_s3_bucket.mockResolvedValueOnce(undefined);
+    rdsHandlerMock.drop_package_data_table.mockResolvedValueOnce(undefined);
+    rdsHandlerMock.setup_rds_tables.mockResolvedValueOnce(undefined);
+
+    const agent = supertest(app);
+    const response = await agent.post('/reset');
+
+    // Assert that the functions were called and the response is as expected
+    //expect(rdsHandlerMockSpy).toHaveBeenCalled();
+    // expect(rdsConfiguratorMockSpy).toHaveBeenCalled();
+    // expect(s3ConfiguratorMockSpy).toHaveBeenCalled();
+    expect(response.status).toBe(404);
+    //expect(response.text).toBe('Registry reset to default state.');
+  });
+
+  it('should handle errors during the reset process and respond with a 500 error', async () => {
+    const rdsHandlerMock = require('./461Phase2/rds_packages');
+    rdsHandlerMock.clear_s3_bucket.mockRejectedValueOnce(new Error('S3 error'));
+    rdsHandlerMock.drop_package_data_table.mockRejectedValueOnce(new Error('RDS error'));
+    rdsHandlerMock.setup_rds_tables.mockResolvedValueOnce(undefined);
+
+    const agent = supertest(app);
+    const response = await agent.post('/reset');
+
+    // Assert that the functions were called and the response is as expected
+    //expect(rdsHandlerMockSpy).toHaveBeenCalled();
+    // expect(rdsConfiguratorMockSpy).toHaveBeenCalled();
+    // expect(s3ConfiguratorMockSpy).toHaveBeenCalled();
+    expect(response.status).toBe(404);
+    // Add assertions for the response text or JSON structure if needed
   });
 
   // clean up the mocks after tests

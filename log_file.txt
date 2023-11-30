@@ -1,7 +1,2 @@
-Failed to get repo info for invaliduser/invalidrepo
-Failed to get repo contributors for invaliduser/invalidrepo
 Failed to get repo license for cloudinary/cloudinary_npm from API
-Failed to get repo license for invaliduser/invalidrepo from API
-Failed to get repo readme for invaliduser/invalidrepo
-{"URL":"https://github.com/nullivex/nodist","NET_SCORE":0.5,"RAMP_UP_SCORE":0.5,"CORRECTNESS_SCORE":0.5,"BUS_FACTOR_SCORE":0.5,"LICENSE_SCORE":1,"GOOD_PINNING_PRACTICE":0.5,"PULL_REQUEST":0.5,"RESPONSIVE_MAINTAINER_SCORE":0.5}
-Failed to get repo readme for invaliduser/invalidrepo
+{"URL":"https://github.com/cloudinary/cloudinary_npm","NET_SCORE":0,"RAMP_UP_SCORE":0.90987,"CORRECTNESS_SCORE":0.7,"BUS_FACTOR_SCORE":0.47998,"LICENSE_SCORE":0,"GOOD_PINNING_PRACTICE":1,"PULL_REQUEST":0.18454,"RESPONSIVE_MAINTAINER_SCORE":0.73912}

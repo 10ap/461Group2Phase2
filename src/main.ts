@@ -25,8 +25,11 @@ const logLevel = Number(process.env.LOG_LEVEL);
 const logFilePath = String(process.env.LOG_FILE);
 
 if(!gitHubToken || !logLevel || !logFilePath){
-    console.error("Error: environment variables not set...\n", gitHubToken, logLevel, logFilePath)
-    process.exit(1)
+    console.error("Error: environment variables not set...\n", gitHubToken, logLevel, logFilePath);
+    console.log("gitHubToken:", gitHubToken);
+    console.log("logLevel:", logLevel);
+    console.log("logFilePath:", logFilePath);
+    process.exit(1);
 }
 
 function ensureDirectoryExistence(directory: string): void {
